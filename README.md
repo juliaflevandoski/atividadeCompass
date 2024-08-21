@@ -1,74 +1,97 @@
-# Atividade Compass
-
-## AWS
-
-Descrever os passos nas AWS
-Aqui está a documentação adaptada com base nos comandos que você usou:
+Aqui está a documentação detalhada para seu repositório no GitHub, cobrindo a configuração da infraestrutura na AWS e o ambiente Linux. Você pode usar este conteúdo diretamente no seu repositório GitHub para descrever o processo completo.
 
 ---
 
-# Documentação para Configuração de Ambiente AWS e Linux
+# Documentação do Projeto AWS e Linux
 
-## Requisitos AWS
+## Índice
 
-### 1. Gerar uma chave pública para acesso ao ambiente
+- [Configuração da Infraestrutura na AWS](#configuração-da-infraestrutura-na-aws)
+  - [Criação da VPC](#criação-da-vpc)
+  - [Criação das Subnets](#criação-das-subnets)
+  - [Criação do Internet Gateway](#criação-do-internet-gateway)
+  - [Configuração da Route Table](#configuração-da-route-table)
+  - [Criação da Instância EC2](#criação-da-instância-ec2)
+  - [Configuração das Regras de Segurança](#configuração-das-regras-de-segurança)
+- [Configuração do Ambiente Linux](#configuração-do-ambiente-linux)
+  - [Atualização e Instalação de Pacotes](#atualização-e-instalação-de-pacotes)
+  - [Configuração do Fuso Horário e Certificados HTTPS](#configuração-do-fuso-horário-e-certificados-https)
+  - [Configuração do Apache](#configuração-do-apache)
+  - [Configuração do NFS](#configuração-do-nfs)
+  - [Criação e Configuração do Script de Verificação](#criação-e-configuração-do-script-de-verificação)
+  - [Configuração do Serviço e Timer para o Script](#configuração-do-serviço-e-timer-para-o-script)
+- [Conclusão](#conclusão)
 
-1. **Abra o console da AWS** e vá para o serviço **EC2**.
-2. No painel de navegação, selecione **Key Pairs** e clique em **Create Key Pair**.
-3. Escolha um **nome** para a chave e **formato** (.pem para Linux, .ppk para Windows).
-4. **Baixe** a chave e **guarde** em um local seguro, pois você precisará dela para acessar sua instância.
+---
 
-### 2. Criar uma instância EC2
+## Configuração da Infraestrutura na AWS
 
-1. No console EC2, clique em **Launch Instance**.
-2. Escolha a **Amazon Linux 2 AMI**.
-3. Selecione o tipo de instância **t3.small**.
-4. Clique em **Next: Configure Instance Details** e ajuste conforme necessário.
-5. Clique em **Next: Add Storage** e defina o **tamanho do SSD** como 16 GB.
-6. Clique em **Next: Add Tags** e adicione tags conforme necessário.
-7. Clique em **Next: Configure Security Group** e adicione as regras de segurança:
-   - Tipo: SSH, Porta: 22, Protocolo: TCP
-   - Tipo: NFS, Porta: 111, Protocolo: TCP e UDP
-   - Tipo: NFS, Porta: 2049, Protocolo: TCP e UDP
-   - Tipo: HTTP, Porta: 80, Protocolo: TCP
-   - Tipo: HTTPS, Porta: 443, Protocolo: TCP
-8. Selecione a chave criada anteriormente em **Key Pair** e clique em **Launch Instance**.
+### Criação da VPC
 
-### 3. Gerar um Elastic IP e anexar à instância EC2
+1. **Nome da VPC**: Definimos o nome da VPC para facilitar a identificação.
+2. **Bloco CIDR**: Escolhemos um bloco de endereçamento IPv4 para a VPC, por exemplo, `10.0.0.0/16`.
+3. **Criação**: Criamos a VPC usando o console da AWS, CLI, ou Terraform, conforme sua preferência.
 
-1. No console EC2, vá para **Elastic IPs** e clique em **Allocate Elastic IP address**.
-2. Selecione o **Elastic IP** e clique em **Actions** > **Associate Elastic IP address**.
-3. Escolha a instância EC2 criada e clique em **Associate**.
+### Criação das Subnets
 
-## Requisitos no Linux
+1. **Nome da Subnet**: Definimos um nome para cada subnet criada.
+2. **Associação à VPC**: Associamos cada subnet à VPC previamente criada.
+3. **Zona de Disponibilidade (AZ)**: Selecionamos a zona de disponibilidade (por exemplo, `us-east-1a`) para a subnet.
+4. **Bloco CIDR da Subnet**: Definimos o bloco de endereçamento IPv4 para cada subnet, como `10.0.1.0/24`.
 
-### 1. Atualizar o sistema e instalar os pacotes necessários
+### Criação do Internet Gateway
+
+1. **Criação do Internet Gateway**: Criamos um Internet Gateway na AWS.
+2. **Associação à VPC**: Associamos o Internet Gateway à VPC, permitindo comunicação da VPC com a internet.
+
+### Configuração da Route Table
+
+1. **Criação da Route Table**: Criamos uma nova tabela de rotas ou utilizamos a tabela padrão.
+2. **Adição de Rota**: Adicionamos uma rota que direciona todo o tráfego (0.0.0.0/0) para o Internet Gateway.
+3. **Associação da Subnet à Route Table**: Associamos a subnet pública à tabela de rotas configurada para permitir o tráfego de saída para a internet.
+
+### Criação da Instância EC2
+
+1. **Escolha da AMI**: Selecionamos o Amazon Linux 2 como o sistema operacional para a instância.
+2. **Tipo de Instância**: Escolhemos `t3.small` como o tipo de instância, o que oferece um equilíbrio entre performance e custo.
+3. **Par de Chaves (Key Pair)**: Criamos ou selecionamos um par de chaves para acesso SSH seguro à instância.
+4. **Configuração de Armazenamento**: Configuramos o armazenamento da instância, utilizando 16 GB de SSD.
+5. **Criação da Instância**: Finalizamos a configuração e lançamos a instância EC2.
+
+### Configuração das Regras de Segurança
+
+1. **Configuração do Security Group**: Criamos ou utilizamos um Security Group existente.
+2. **Liberação das Portas**: Adicionamos regras para liberar as portas necessárias:
+   - Porta 22/TCP: Para acesso SSH.
+   - Porta 80/TCP: Para tráfego HTTP.
+   - Porta 443/TCP: Para tráfego HTTPS.
+   - Porta 111/TCP e UDP, 2049/TCP e UDP: Para o serviço NFS.
+
+---
+
+## Configuração do Ambiente Linux
+
+### Atualização e Instalação de Pacotes
 
 ```bash
-# Buscar atualizações disponíveis
 sudo yum update
 
-# Instalar atualizações
 sudo yum upgrade -y
 
-# Instalar NFS, HTTPD (Apache) e mod_ssl para suporte HTTPS
 sudo yum install nfs-utils httpd mod_ssl -y
 ```
 
-### 2. Configuração do fuso horário e criação de certificados HTTPS
+### Configuração do Fuso Horário e Certificados HTTPS
 
 ```bash
-# Modificar o fuso horário para São Paulo
 sudo timedatectl set-timezone America/Sao_Paulo
 
-# Criar certificados HTTPS
 openssl req -newkey rsa:2048 -nodes -keyout /etc/pki/tls/private/httpd.key -x509 -days 3650 -out /etc/pki/tls/certs/httpd.crt
 ```
 
-### 3. Configuração do Apache
+### Configuração do Apache
 
 ```bash
-# Criar diretório para arquivos HTTPS
 mkdir /var/www/https
 
 # Criar uma página HTML para requisições HTTP
@@ -78,42 +101,27 @@ sudo bash -c 'echo "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8
 sudo bash -c 'echo "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Simple HTML</title><style>body {font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333;} header {background-color: #333; color: white; padding: 1em;} main {padding: 2em;} h1 {font-size: 2em; margin-bottom: 0.5em;} p {font-size: 1.2em; line-height: 1.6; text-align: justify;} footer {background-color: #333; color: white; text-align: center; padding: 1em; position: fixed; bottom: 0; width: 100%;}</style></head><body><header><h1>Some Title HTTPS!</h1></header><main><h2>Welcome!</h2><p>This is a basic HTML template with some CSS styling. You can customize the content and styles as needed.</p><p>The header and footer sections are styled to be distinct, with the footer remaining fixed at the bottom of the page.</p></main><footer><span>&copy; 2024 My Website</span></footer></body></html>" > /var/www/html/index.html'
 ```
 
-### 4. Configuração do NFS
+### Configuração do NFS
 
 ```bash
-# Criar diretório para NFS e subdiretório com nome
 sudo mkdir /srv/nfs
-sudo mkdir /srv/nfs_share/julia
+sudo mkdir /srv/nfs/julia
 
-# Alterar o dono do diretório para 'nobody'
 sudo chown -R nobody:nobody /srv/nfs/
 
-# Modificar permissões para leitura e escrita para todos
-sudo chmod 666 -R /srv/nfs
+sudo chmod 666 -R /srv/nfs_share
 
-# Adicionar configuração ao arquivo de exportações do NFS
-sudo bash -c 'echo "/srv/nfs 0.0.0.0/0(rw,all_squash)" >> /etc/exports'
+sudo bash -c 'echo "/srv/nfs_share 0.0.0.0/0(rw,all_squash)" >> /etc/exports'
 
-# Iniciar e habilitar o serviço NFS
-sudo systemctl start nfs
-sudo systemctl enable nfs
+sudo systemctl start nfs-server
+sudo systemctl enable nfs-server
 
-# Aplicar as configurações do NFS
 sudo exportfs -rav
 ```
 
-### 5. Configuração e execução do Apache
+### Criação e Configuração do Script de Verificação
 
 ```bash
-# Iniciar e habilitar o serviço Apache
-sudo systemctl start httpd.service
-sudo systemctl enable httpd.service
-```
-
-### 6. Criar e configurar o script de verificação do Apache
-
-```bash
-# Criar o script para verificar o status do HTTPD
 sudo bash -c 'echo "#!/bin/bash
 
 PROCESS_NAME=\"httpd\"
@@ -129,14 +137,12 @@ else
   echo \"[\${CURRENT_DATE}] - Process \"\${POPULAR_NAME}\" is INACTIVE\" >> /srv/nfs/julia/OFFLINE.log
 fi" > /usr/bin/httpd_check.sh'
 
-# Tornar o script executável
 sudo chmod +x /usr/bin/httpd_check.sh
 ```
 
-### 7. Configuração do serviço e timer para o script de verificação
+### Configuração do Serviço e Timer para o Script
 
 ```bash
-# Criar o serviço systemd para o script
 sudo bash -c 'echo "[Unit]
 Description=Verify if HTTPD is active
 
@@ -147,7 +153,6 @@ ExecStart=/usr/bin/httpd_check.sh
 [Install]
 WantedBy=multi-user.target" > /etc/systemd/system/httpd_check.service'
 
-# Criar o timer systemd para o serviço
 sudo bash -c 'echo "[Unit]
 Description=\"Timer for HTTPD CHECK service\"
 
@@ -159,8 +164,9 @@ AccuracySec=1s
 [Install]
 WantedBy=timers.target" > /etc/systemd/system/httpd_check.timer'
 
-# Recarregar configurações do systemd e habilitar o timer
 sudo systemctl daemon-reload
 sudo systemctl enable httpd_check.timer
 sudo systemctl status httpd_check.timer
 ```
+
+---
