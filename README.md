@@ -4,24 +4,6 @@ Aqui está a documentação detalhada para seu repositório no GitHub, cobrindo 
 
 # Documentação do Projeto AWS e Linux
 
-## Índice
-
-- [Configuração da Infraestrutura na AWS](#configuração-da-infraestrutura-na-aws)
-  - [Criação da VPC](#criação-da-vpc)
-  - [Criação das Subnets](#criação-das-subnets)
-  - [Criação do Internet Gateway](#criação-do-internet-gateway)
-  - [Configuração da Route Table](#configuração-da-route-table)
-  - [Criação da Instância EC2](#criação-da-instância-ec2)
-  - [Configuração das Regras de Segurança](#configuração-das-regras-de-segurança)
-- [Configuração do Ambiente Linux](#configuração-do-ambiente-linux)
-  - [Atualização e Instalação de Pacotes](#atualização-e-instalação-de-pacotes)
-  - [Configuração do Fuso Horário e Certificados HTTPS](#configuração-do-fuso-horário-e-certificados-https)
-  - [Configuração do Apache](#configuração-do-apache)
-  - [Configuração do NFS](#configuração-do-nfs)
-  - [Criação e Configuração do Script de Verificação](#criação-e-configuração-do-script-de-verificação)
-  - [Configuração do Serviço e Timer para o Script](#configuração-do-serviço-e-timer-para-o-script)
-- [Conclusão](#conclusão)
-
 ---
 
 ## Configuração da Infraestrutura na AWS
