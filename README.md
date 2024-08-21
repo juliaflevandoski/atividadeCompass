@@ -82,21 +82,21 @@ sudo bash -c 'echo "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8
 
 ```bash
 # Criar diretório para NFS e subdiretório com nome
-sudo mkdir /srv/nfs_share
-sudo mkdir /srv/nfs_share/cristian
+sudo mkdir /srv/nfs
+sudo mkdir /srv/nfs_share/julia
 
 # Alterar o dono do diretório para 'nobody'
-sudo chown -R nobody:nobody /srv/nfs_share/
+sudo chown -R nobody:nobody /srv/nfs/
 
 # Modificar permissões para leitura e escrita para todos
-sudo chmod 666 -R /srv/nfs_share
+sudo chmod 666 -R /srv/nfs
 
 # Adicionar configuração ao arquivo de exportações do NFS
-sudo bash -c 'echo "/srv/nfs_share 0.0.0.0/0(rw,all_squash)" >> /etc/exports'
+sudo bash -c 'echo "/srv/nfs 0.0.0.0/0(rw,all_squash)" >> /etc/exports'
 
 # Iniciar e habilitar o serviço NFS
-sudo systemctl start nfs-server
-sudo systemctl enable nfs-server
+sudo systemctl start nfs
+sudo systemctl enable nfs
 
 # Aplicar as configurações do NFS
 sudo exportfs -rav
@@ -124,9 +124,9 @@ CURRENT_DATE=\$(date +%d/%m/%y-%H:%M:%S)
 PROCESS_ACTIVE=\$(systemctl is-active \"\$PROCESS_NAME\")
 
 if [ \"\$PROCESS_ACTIVE\" = \"active\" ]; then
-  echo \"[\${CURRENT_DATE}] - Process \"\${POPULAR_NAME}\" is ACTIVE at the moment!\" >> /srv/nfs_share/cristian/ONLINE.log
+  echo \"[\${CURRENT_DATE}] - Process \"\${POPULAR_NAME}\" is ACTIVE\" >> /srv/nfs/julia/ONLINE.log
 else
-  echo \"[\${CURRENT_DATE}] - Process \"\${POPULAR_NAME}\" is INACTIVE at the moment!\" >> /srv/nfs_share/cristian/OFFLINE.log
+  echo \"[\${CURRENT_DATE}] - Process \"\${POPULAR_NAME}\" is INACTIVE\" >> /srv/nfs/julia/OFFLINE.log
 fi" > /usr/bin/httpd_check.sh'
 
 # Tornar o script executável
