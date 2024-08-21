@@ -91,7 +91,7 @@ sudo mkdir /srv/nfs/julia
 
 sudo chown -R nobody:nobody /srv/nfs/
 
-sudo chmod 666 -R /srv/nfs_share
+sudo chmod 666 -R /srv/nfs
 
 sudo bash -c 'echo "/srv/nfs_share 0.0.0.0/0(rw,all_squash)" >> /etc/exports'
 
