@@ -164,37 +164,3 @@ sudo systemctl daemon-reload
 sudo systemctl enable httpd_check.timer
 sudo systemctl status httpd_check.timer
 ```
-
-## Versionamento e Documentação
-
-1. **Inicialize um repositório Git** no diretório de trabalho:
-   ```bash
-   git init
-   ```
-
-2. Adicione os arquivos ao repositório:
-   ```bash
-   git add /usr/bin/httpd_check.sh
-   git add /etc/systemd/system/httpd_check.service
-   git add
-
-## Linux
-
-Descrever os passos no Linux
-
-
-**asdfsadf**
-
-*asdfasdf*
-
-# Titulo 1
-
-## Titulo 2
-
-### Titulo 3
-
-
-
-```bash
-echo oi
-```
